@@ -1,0 +1,82 @@
+/*.register {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .rContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .rInput{
+    height: 30px;
+    padding: 10px;
+  }
+  
+  .rButton {
+    border: none;
+    padding: 10px 20px;
+    background-color: #0071c2;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .rButton:disabled{
+    background-color: #0071c28c;
+    cursor: not-allowed;
+  }*/
+  .register {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+  }
+  
+  .rContainer {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 400px;
+  }
+  
+  .rInput {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Ensure padding is included in the width calculation */
+    display: flex; /* Use flexbox for vertical alignment */
+    align-items: center; /* Align items vertically in the center */
+  }
+  
+  
+  .rButton {
+    width: 100%;
+    padding: 10px;
+    background-color: #4caf50;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .rButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  span {
+    color: red;
+    margin-top: 10px;
+    display: block;
+    text-align: center;
+  }
+  
