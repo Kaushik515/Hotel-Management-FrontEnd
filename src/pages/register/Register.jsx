@@ -90,7 +90,7 @@ const Register = () => {
         e.preventDefault();
         dispatch({ type: "REGISTER_START" });
         try {
-            const res = await axios.post("/auth/register", credentials);
+            const res = await axios.post("https://hotel-management-x3um.onrender.com/auth/register", credentials);
             dispatch({ type: "RESISTER_SUCCESS", payload: res.data.details });
             alert(res);
             
