@@ -9,6 +9,7 @@ const Login = () => {
     username: undefined,
     password: undefined,
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const { loading, error, dispatch } = useContext(AuthContext);
 
@@ -32,28 +33,37 @@ const Login = () => {
 
 
   return (
-    
     <div className="login">
-      
       <div className="lContainer">
+        <h1 className="lTitle">Welcome Back</h1>
+        <p className="lSubtitle">Login to continue your hotel journey</p>
         <input
           type="text"
-          placeholder="username"
+          placeholder="Username"
           id="username"
           onChange={handleChange}
           className="lInput"
         />
-        <input
-          type="password"
-          placeholder="password"
-          id="password"
-          onChange={handleChange}
-          className="lInput"
-        />
+        <div className="lPasswordWrap">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            id="password"
+            onChange={handleChange}
+            className="lInput"
+          />
+          <button
+            type="button"
+            className="lToggle"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
         <button disabled={loading} onClick={handleClick} className="lButton">
           Login
         </button>
-        {error && <span>{error.message}</span>}
+        {error && <span className="lError">{error.message}</span>}
       </div>
     </div>
   );

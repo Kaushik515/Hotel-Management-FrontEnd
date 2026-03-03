@@ -1,32 +1,101 @@
 .login {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, #e0f2fe 0%, #f8fafc 45%, #f0f9ff 100%);
+  padding: 20px;
 }
 
 .lContainer {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
+  width: 100%;
+  max-width: 420px;
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 30px 24px;
+  box-shadow: 0 14px 35px rgba(0, 40, 120, 0.12);
 }
 
-.lInput{
-  height: 30px;
-  padding: 10px;
+.lTitle {
+  margin: 0;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.lSubtitle {
+  margin: -4px 0 10px;
+  text-align: center;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.lInput {
+  height: 44px;
+  width: 100%;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 15px;
+  color: #0f172a;
+  box-sizing: border-box;
+}
+
+.lInput:focus {
+  outline: none;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.lPasswordWrap {
+  position: relative;
+}
+
+.lPasswordWrap .lInput {
+  padding-right: 72px;
+}
+
+.lToggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #0284c7;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
 }
 
 .lButton {
   border: none;
+  height: 44px;
   padding: 10px 20px;
-  background-color: #0071c2;
+  background-color: #0284c7;
   color: white;
   font-weight: bold;
+  font-size: 15px;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
 }
 
-.lButton:disabled{
-  background-color: #0071c28c;
+.lButton:hover:not(:disabled) {
+  background-color: #0369a1;
+}
+
+.lButton:disabled {
+  background-color: #7dd3fc;
   cursor: not-allowed;
+}
+
+.lError {
+  text-align: center;
+  color: #dc2626;
+  font-size: 14px;
 }
