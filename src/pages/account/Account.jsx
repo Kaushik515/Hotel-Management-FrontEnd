@@ -83,26 +83,10 @@ const Account = () => {
         setProfile(mapUserToProfile(res.data));
       } catch (err) {
         const status = err?.response?.status;
-        if (status === 401) {
+        if (status === 401 || status === 403) {
           dispatch({ type: "LOGOUT" });
           navigate("/login");
           return;
-        }
-
-        if (status === 403 && currentUserId) {
-          try {
-            const fallbackRes = await axios.get(`/api/users/${currentUserId}`);
-            setProfile(mapUserToProfile(fallbackRes.data));
-            setLoadingProfile(false);
-            return;
-          } catch (fallbackErr) {
-            setError(
-              fallbackErr?.response?.data?.message ||
-                "Could not load account details."
-            );
-            setLoadingProfile(false);
-            return;
-          }
         }
 
         setError(

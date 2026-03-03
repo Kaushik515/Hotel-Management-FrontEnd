@@ -1,5 +1,5 @@
 import "./myBookings.css";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/navbar/Navbar";
@@ -8,7 +8,7 @@ import Footer from "../../components/footer/Footer";
 import { AuthContext } from "../../context/AuthContext";
 
 const MyBookings = () => {
-  const { user } = useContext(AuthContext);
+  const { user, dispatch, isAuthInitialized } = useContext(AuthContext);
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ const MyBookings = () => {
   const [submittingReviewId, setSubmittingReviewId] = useState("");
   const [generatingReviewId, setGeneratingReviewId] = useState("");
 
-  const fetchBookings = async (userId) => {
+  const fetchBookings = useCallback(async (userId) => {
     setLoading(true);
     setError("");
     try {
@@ -26,22 +26,28 @@ const MyBookings = () => {
       setBookings(res.data);
     } catch (err) {
       if (err?.response?.status === 401 || err?.response?.status === 403) {
-        setError("Session expired. Please login again.");
+        dispatch({ type: "LOGOUT" });
+        navigate("/login");
+        return;
       } else {
         setError(err?.response?.data?.message || "Could not load bookings.");
       }
     }
     setLoading(false);
-  };
+  }, [dispatch, navigate]);
 
   useEffect(() => {
+    if (!isAuthInitialized) {
+      return;
+    }
+
     const currentUserId = user?._id || user?.id;
     if (!currentUserId) {
       navigate("/login");
       return;
     }
     fetchBookings(currentUserId);
-  }, [user, navigate]);
+  }, [user, navigate, isAuthInitialized, fetchBookings]);
 
   const getBookingEndDate = (dates = []) => {
     if (!Array.isArray(dates) || dates.length === 0) return null;
@@ -266,7 +272,8 @@ const MyBookings = () => {
       <div className="myBookingsContainer">
         <h1 className="myBookingsTitle">My Bookings</h1>
 
-        {loading && <p>Loading bookings...</p>}
+        {!isAuthInitialized && <p>Loading bookings...</p>}
+        {isAuthInitialized && loading && <p>Loading bookings...</p>}
         {error && <p className="myBookingsError">{error}</p>}
         {error && (user?._id || user?.id) && (
           <button className="retryButton" onClick={() => fetchBookings(user?._id || user?.id)}>
