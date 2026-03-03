@@ -2,6 +2,32 @@ import { createContext, useEffect, useReducer, useState } from "react";
 
 const AuthContext = createContext();
 
+const parseJwtPayload = (token = "") => {
+  try {
+    const [, payload] = token.split(".");
+    if (!payload) return null;
+
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const decoded = atob(normalized);
+    return JSON.parse(decoded);
+  } catch (error) {
+    return null;
+  }
+};
+
+const isTokenActive = (token = "") => {
+  if (!token || typeof token !== "string") return false;
+
+  const payload = parseJwtPayload(token);
+  const exp = Number(payload?.exp);
+
+  if (!exp) {
+    return false;
+  }
+
+  return exp * 1000 > Date.now();
+};
+
 const INITIAL_STATE = {
   user: null,
   loading: false,
@@ -55,7 +81,11 @@ const AuthReducer = (state, action) => {
       };
     case "UPDATE_USER":
       return {
-        user: action.payload,
+        user: {
+          ...(state.user || {}),
+          ...(action.payload || {}),
+          token: action.payload?.token || state.user?.token,
+        },
         loading: false,
         error: null,
       };
@@ -71,19 +101,23 @@ const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      const storedUser = JSON.parse(localStorage.getItem("user"));
-      if (storedUser) {
+      const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+
+      if (storedUser?.token && isTokenActive(storedUser.token)) {
         dispatch({ type: "LOGIN_SUCCESS", payload: storedUser });
+      } else {
+        localStorage.removeItem("user");
       }
     } catch (error) {
       console.error("Error parsing user from localStorage:", error);
+      localStorage.removeItem("user");
     } finally {
       setIsAuthInitialized(true);
     }
   }, []);
 
   useEffect(() => {
-    if (state.user) {
+    if (state.user?.token && isTokenActive(state.user.token)) {
       localStorage.setItem("user", JSON.stringify(state.user));
     } else {
       localStorage.removeItem("user");

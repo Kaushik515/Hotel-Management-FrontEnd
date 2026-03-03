@@ -15,6 +15,7 @@
 - 🔎 Smart hotel listing filters and improved search behavior
 - 🏩 Hotel detail page with reservation modal + date-based checks
 - 🔐 Login/Register with enhanced validation
+- 🛡️ Deployment-safe auth session handling (token persistence + expiry guards)
 - 👤 My Account page with profile view/edit and password security center
 - 📖 My Bookings page with active/history sections, filters, cancellation, and reviews
 - 🖼️ Local image pipeline with fallback handling
@@ -94,6 +95,14 @@ Architecture highlights:
 - `useFetch` for shared loading/error/data fetching logic
 - Reusable component composition across all route pages
 
+Session/auth hardening:
+
+- Axios request interceptor auto-attaches `Authorization: Bearer <token>` from persisted user session.
+- Token is validated at app bootstrap; expired/malformed sessions are cleared before protected pages load.
+- Global axios response interceptor handles `401/403` (non-auth endpoints):
+    - clears stale session
+    - redirects to `/login?reason=session-expired`.
+
 ## 🔄 Key User Flows
 
 ### Reservation Flow
@@ -137,6 +146,7 @@ Architecture highlights:
 - **App not starting**: ensure port `3000` is free
 - **API calls failing**: verify backend is running on `5000`
 - **Auth issues**: check backend CORS + credentials settings
+- **Session expires immediately after deploy**: clear browser local storage once, login again, then verify request headers contain `Authorization: Bearer ...`
 - **Missing images**: confirm files exist in `public/images`
 
 ## 🚢 Deployment Notes
@@ -149,6 +159,8 @@ Architecture highlights:
 ## ✅ QA Checklist
 
 - [ ] Register/Login/Logout works end-to-end
+- [ ] Refresh protected routes (`/account`, `/my-bookings`) keeps session active
+- [ ] Expired token redirects to `/login?reason=session-expired`
 - [ ] Featured counts render correctly
 - [ ] Booking conflict path shows clear `409` message
 - [ ] My Bookings lists user data and allows cancel
