@@ -64,8 +64,6 @@ const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-     // localStorage.setItem("user", JSON.stringify(userData));
-
       const storedUser = JSON.parse(localStorage.getItem("user"));
       if (storedUser) {
         dispatch({ type: "LOGIN_SUCCESS", payload: storedUser });
@@ -74,6 +72,14 @@ const AuthContextProvider = ({ children }) => {
       console.error("Error parsing user from localStorage:", error);
     }
   }, []);
+
+  useEffect(() => {
+    if (state.user) {
+      localStorage.setItem("user", JSON.stringify(state.user));
+    } else {
+      localStorage.removeItem("user");
+    }
+  }, [state.user]);
 
   return (
     <AuthContext.Provider

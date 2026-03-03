@@ -5,13 +5,22 @@ import "./reserve.css";
 import useFetch from "../../hooks/useFetch";
 import { useContext, useState } from "react";
 import { SearchContext } from "../../context/SearchContext";
+import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Reserve = ({ setOpen, hotelId }) => {
+const Reserve = ({ setOpen, hotelId, hotelName, roomPrice }) => {
+  const normalizeToUtcMidnight = (dateValue) => {
+    const date = new Date(dateValue);
+    return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+  };
+
   const [selectedRooms, setSelectedRooms] = useState([]);
+  const [bookingInProgress, setBookingInProgress] = useState(false);
+  const [reserveError, setReserveError] = useState("");
   const { data, loading, error } = useFetch(`/hotels/room/${hotelId}`);
   const { dates } = useContext(SearchContext);
+  const { user } = useContext(AuthContext);
 
   const getDatesInRange = (startDate, endDate) => {
     const start = new Date(startDate);
@@ -22,18 +31,23 @@ const Reserve = ({ setOpen, hotelId }) => {
     const dates = [];
 
     while (date <= end) {
-      dates.push(new Date(date).getTime());
+      dates.push(normalizeToUtcMidnight(date));
       date.setDate(date.getDate() + 1);
     }
 
     return dates;
   };
 
-  const alldates = getDatesInRange(dates[0].startDate, dates[0].endDate);
+  const hasValidDates = dates?.[0]?.startDate && dates?.[0]?.endDate;
+  const alldates = hasValidDates
+    ? getDatesInRange(dates[0].startDate, dates[0].endDate)
+    : [];
+  const selectedRoomCount = selectedRooms.length;
+  const totalPrice = (roomPrice || 0) * selectedRoomCount * alldates.length;
 
   const isAvailable = (roomNumber) => {
     const isFound = roomNumber.unavailableDates.some((date) =>
-      alldates.includes(new Date(date).getTime())
+      alldates.includes(normalizeToUtcMidnight(date))
     );
 
     return !isFound;
@@ -53,17 +67,43 @@ const Reserve = ({ setOpen, hotelId }) => {
 
   const handleClick = async () => {
     try {
-      await Promise.all(
-        selectedRooms.map((roomId) => {
-          const res = axios.put(`/rooms/availability/${roomId}`, {
-            dates: alldates,
-          });
-          return res.data;
-        })
+      setReserveError("");
+
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+
+      if (!hasValidDates) {
+        setReserveError("Please select check-in and check-out dates before reserving.");
+        return;
+      }
+
+      if (selectedRooms.length === 0) {
+        setReserveError("Please select at least one room.");
+        return;
+      }
+
+      setBookingInProgress(true);
+
+      await axios.post(
+        "/api/bookings",
+        {
+          hotelId,
+          hotelName,
+          roomNumberIds: selectedRooms,
+          dates: alldates,
+          totalPrice,
+        }
       );
+
       setOpen(false);
-      navigate("/");
-    } catch (err) {}
+      navigate("/my-bookings");
+    } catch (err) {
+      setReserveError(err?.response?.data?.message || "Failed to reserve room.");
+    } finally {
+      setBookingInProgress(false);
+    }
   };
   return (
     <div className="reserve">
@@ -74,7 +114,15 @@ const Reserve = ({ setOpen, hotelId }) => {
           onClick={() => setOpen(false)}
         />
         <span>Select your rooms:</span>
-        {data.map((item) => (
+        {loading && <div className="reserveFeedback">Loading available rooms...</div>}
+        {error && !loading && (
+          <div className="reserveFeedback reserveFeedbackError">
+            Failed to load rooms. Please try again.
+          </div>
+        )}
+        {!loading &&
+          !error &&
+          data.map((item) => (
           <div className="rItem" key={item._id}>
             <div className="rItemInfo">
               <div className="rTitle">{item.title}</div>
@@ -86,7 +134,7 @@ const Reserve = ({ setOpen, hotelId }) => {
             </div>
             <div className="rSelectRooms">
               {item.roomNumbers.map((roomNumber) => (
-                <div className="room">
+                <div className="room" key={roomNumber._id}>
                   <label>{roomNumber.number}</label>
                   <input
                     type="checkbox"
@@ -99,8 +147,21 @@ const Reserve = ({ setOpen, hotelId }) => {
             </div>
           </div>
         ))}
-        <button onClick={handleClick} className="rButton">
-          Reserve Now!
+
+        <div className="reserveSummary">
+          <span>{selectedRoomCount} room(s) selected</span>
+          <span>{alldates.length} night(s)</span>
+          <b>Total: ${totalPrice}</b>
+        </div>
+
+        {reserveError && <div className="reserveFeedback reserveFeedbackError">{reserveError}</div>}
+
+        <button
+          onClick={handleClick}
+          className="rButton"
+          disabled={bookingInProgress || loading}
+        >
+          {bookingInProgress ? "Reserving..." : "Reserve Now!"}
         </button>
       </div>
     </div>

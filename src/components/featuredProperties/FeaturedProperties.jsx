@@ -2,7 +2,18 @@ import useFetch from "../../hooks/useFetch";
 import "./featuredProperties.css";
 
 const FeaturedProperties = () => {
-  const { data, loading, error } = useFetch("/hotels?featured=true&limit=4");
+  const { data, loading } = useFetch("/hotels?featured=true&limit=4");
+
+  const fallbackImages = [
+    "/images/luxury-room1.jpg",
+    "/images/luxury-room2.jpg",
+    "/images/luxury-room3.jpg",
+    "/images/luxury-room4.jpg",
+  ];
+
+  const handleImageError = (e) => {
+    e.target.src = "/images/fallback.jpg";
+  };
   
   return (
     <div className="fp">
@@ -10,12 +21,13 @@ const FeaturedProperties = () => {
         "Loading"
       ) : (
         <>
-          {data.map((item) => (
+          {data.map((item, index) => (
             <div className="fpItem" key={item._id}>
               <img
-                src={item.photos[0]}
+                src={item.photos?.[0] || fallbackImages[index % fallbackImages.length]}
                 alt=""
                 className="fpImg"
+                onError={handleImageError}
               />
               <span className="fpName">{item.name}</span>
               <span className="fpCity">{item.city}</span>

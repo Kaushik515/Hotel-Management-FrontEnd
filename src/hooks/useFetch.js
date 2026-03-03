@@ -10,7 +10,7 @@ const useFetch = (url) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`https://hotel-management-x3um.onrender.com/api${url}`);
+        const res = await axios.get(`/api${url}`);
         console.log(res);
         setData(res.data);
       } catch (err) {
@@ -24,7 +24,7 @@ const useFetch = (url) => {
   const reFetch = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`https://hotel-management-x3um.onrender.com/api${url}`);
+      const res = await axios.get(`/api${url}`);
       setData(res.data);
     } catch (err) {
       setError(err);

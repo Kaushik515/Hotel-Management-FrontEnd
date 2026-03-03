@@ -1,5 +1,6 @@
 .header {
-  background-color: #003580;
+  background: linear-gradient(rgba(0, 53, 128, 0.82), rgba(0, 53, 128, 0.82)),
+    url("../../../public/images/luxury-room2.jpg") center/cover no-repeat;
   color: white;
   display: flex;
   justify-content: center;
@@ -9,7 +10,7 @@
 .headerContainer {
   width: 100%;
   max-width: 1024px;
-  margin: 20px 0px 100px 0px;
+  margin: 24px 0px 110px 0px;
 }
 
 .headerContainer.listMode {
@@ -19,7 +20,7 @@
 .headerList {
   display: flex;
   gap: 40px;
-  margin-bottom: 50px;
+  margin-bottom: 56px;
   color: white;
 }
 .icon{
@@ -37,10 +38,21 @@
   border: 1px solid white;
   padding: 10px;
   border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .headerDesc {
-  margin: 20px 0px;
+  margin: 20px 0px 30px;
+  max-width: 780px;
+  font-size: 29px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.headerTitle {
+  margin: 0;
+  font-size: 54px;
+  line-height: 1.2;
 }
 
 .headerBtn {
@@ -53,18 +65,26 @@
 }
 
 .headerSearch {
-  height: 30px;
+  height: 44px;
   background-color: white;
-  border: 3px solid #febb02;
+  border: 2px solid #febb02;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 10px 0px;
-  border-radius: 5px;
+  padding: 10px 6px;
+  border-radius: 8px;
   position: absolute;
   bottom: -25px;
   width: 100%;
   max-width: 1024px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.headerSearchError {
+  display: inline-block;
+  margin-top: 36px;
+  color: #ffd4d4;
+  font-size: 13px;
 }
 
 .headerIcon {
@@ -80,6 +100,7 @@
 .headerSearchInput {
   border: none;
   outline: none;
+  font-size: 15px;
 }
 
 .headerSearchText {

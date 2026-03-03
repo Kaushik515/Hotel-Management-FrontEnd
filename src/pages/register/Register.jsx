@@ -1,12 +1,16 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import "./register.css";
+import { getNames as getCountryNames } from "country-list";
 
 
 import Select from "react-select";
 
+const isValidEmail = (email = "") => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim().toLowerCase());
+};
 
 
 const Register = () => {
@@ -19,18 +23,40 @@ const Register = () => {
         isAdmin: false,
         password: "",
     });
-    const [data, setData] = useState([]);
-    useEffect(() => {
-        axios.get("https://pkgstore.datahub.io/core/world-cities/world-cities_json/data/5b3dd46ad10990bca47b04b4739a02ba/world-cities_json.json")
-            .then(res => setData(res.data))
-            .catch(err => console.log("Error: ", err));
+    const [cityData, setCityData] = useState([]);
+    const [citiesLoading, setCitiesLoading] = useState(false);
+    const [formError, setFormError] = useState("");
 
+    useEffect(() => {
+        const fetchCities = async () => {
+            setCitiesLoading(true);
+            try {
+                const res = await fetch(
+                    "https://pkgstore.datahub.io/core/world-cities/world-cities_json/data/5b3dd46ad10990bca47b04b4739a02ba/world-cities_json.json",
+                    {
+                        credentials: "omit",
+                    }
+                );
+
+                if (!res.ok) {
+                    throw new Error("Failed to load city data.");
+                }
+
+                const cities = await res.json();
+                setCityData(cities || []);
+            } catch (err) {
+                console.log("Error loading city data: ", err);
+                setCityData([]);
+            }
+            setCitiesLoading(false);
+        };
+
+        fetchCities();
     }, []);
 
     const { loading, error, dispatch } = useContext(AuthContext);
 
     const navigate = useNavigate()
-    var selectedCountryCities = [];
     
 
     const handleChange = (e, field) => {
@@ -55,31 +81,40 @@ const Register = () => {
 
     };
 
-    const countryList = [...new Set(data.map(item => item.country))];
+    const countryOptions = useMemo(() => {
+        const countries = [...new Set(getCountryNames().map((country) => (country || "").trim()))]
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b));
 
-    // console.log(countryList);
-    const filterCountryOptions = (inputValue) => {
-        return countryList
-            .filter((country) =>
-                country.toLowerCase()?.startsWith(inputValue?.toLowerCase())
-            )
-            .map((country) => ({
-                label: country,
-                value: country,
-            }));
-    };
-    const filterCityOptions = (inputValue) => {
-        const selectedCountry = credentials.country;
-        selectedCountryCities = data.filter(city => city.country === selectedCountry).map(city => city.name);
+        return countries.map((country) => ({
+            label: country,
+            value: country,
+        }));
+    }, []);
 
-        return selectedCountryCities
-            .filter((city) =>
-                city.toLowerCase()?.startsWith(inputValue?.toLowerCase())
-            )
-            .map((city) => ({
-                label: city,
-                value: city,
-            }));
+    const cityOptions = useMemo(() => {
+        if (!credentials.country) return [];
+
+        const selectedCountry = credentials.country.trim().toLowerCase();
+        const cities = [...new Set(
+            cityData
+                .filter((item) => (item.country || "").trim().toLowerCase() === selectedCountry)
+                .map((item) => (item.name || "").trim())
+        )]
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b));
+
+        const visibleCities = cities.slice(0, 2000);
+
+        return visibleCities.map((city) => ({
+            label: city,
+            value: city,
+        }));
+    }, [cityData, credentials.country]);
+
+    const filterByLabel = (option, inputValue) => {
+        if (!inputValue) return true;
+        return option.label.toLowerCase().includes(inputValue.toLowerCase());
     };
 
 
@@ -88,13 +123,35 @@ const Register = () => {
 
     const handleClick = async (e) => {
         e.preventDefault();
+        setFormError("");
+
+        const normalizedEmail = (credentials.email || "").trim().toLowerCase();
+
+        if (!credentials.country || !credentials.city) {
+            setFormError("Please select both country and city.");
+            return;
+        }
+
+        if (!normalizedEmail || !isValidEmail(normalizedEmail)) {
+            setFormError("Please enter a valid email address.");
+            return;
+        }
+
         dispatch({ type: "REGISTER_START" });
         try {
-            const res = await axios.post("https://hotel-management-x3um.onrender.com/api/auth/register", credentials);
-            dispatch({ type: "RESISTER_SUCCESS", payload: res.data.details });
-            alert(res);
-            
-            navigate("/")
+            const res = await axios.post("/api/auth/register", {
+                ...credentials,
+                email: normalizedEmail,
+            });
+            dispatch({ type: "REGISTER_SUCCESS", payload: null });
+
+            const successMessage =
+                typeof res.data === "string"
+                    ? res.data
+                    : "Registration successful. Please login.";
+            alert(successMessage);
+
+            navigate("/login")
         } catch (err) {
             dispatch({ type: "REGISTER_FAILURE", payload: err.response.data });
             console.log("ERROR: ", err);
@@ -112,10 +169,12 @@ const Register = () => {
                     value={credentials.country ? { label: credentials.country, value: credentials.country } : null}
                     onChange={(selectedOption) => handleChange(selectedOption, "country")}
                     id="country"
-                    options={filterCountryOptions(credentials.country)}
+                    options={countryOptions}
+                    filterOption={filterByLabel}
                     placeholder="Country"
                     className="rInput"
-                    required
+                    isClearable
+                    isSearchable
                     noOptionsMessage={({ inputValue }) =>
                         inputValue ? "Country doesn't exist" : "Type to search"
                     }
@@ -125,12 +184,20 @@ const Register = () => {
                     value={credentials.city ? { label: credentials.city, value: credentials.city } : null}
                     onChange={(selectedOption) => handleChange(selectedOption, "city")}
                     id="city"
-                    options={filterCityOptions(credentials.city)}
+                    options={cityOptions}
+                    filterOption={filterByLabel}
                     placeholder="City"
                     className="rInput"
-                    required
+                    isClearable
+                    isSearchable
+                    isLoading={citiesLoading}
+                    isDisabled={!credentials.country}
                     noOptionsMessage={({ inputValue }) =>
-                        inputValue ? "City doesn't exist" : "Type to search"
+                        !credentials.country
+                            ? "Select country first"
+                            : inputValue
+                                ? "City doesn't exist"
+                                : "Type to search"
                     }
                 />
 
@@ -140,7 +207,8 @@ const Register = () => {
                 <button disabled={loading} onClick={handleClick} className="rButton">
                     Register
                 </button>
-                {error && <span>{error.message}</span>}
+                {formError && <span className="rError">{formError}</span>}
+                {error && <span className="rError">{error.message}</span>}
             </div>
         </div>
     );

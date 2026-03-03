@@ -10,10 +10,24 @@
 .featuredItem{
   position: relative;
   color: white;
-  border-radius: 10px;
+  border-radius: 14px;
   overflow: hidden;
   height: 250px;
-  flex:1
+  flex: 1;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.featuredItem::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.1));
+}
+
+.featuredItem:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
 }
 
 .featuredImg{
@@ -26,4 +40,17 @@
   position: absolute;
   bottom: 20px;
   left: 20px;
+  z-index: 2;
+}
+
+.featuredTitles h1 {
+  margin: 0;
+  font-size: 30px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.featuredTitles h2 {
+  margin: 4px 0 0;
+  font-weight: 500;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }

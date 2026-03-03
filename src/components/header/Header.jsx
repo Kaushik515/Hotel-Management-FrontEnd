@@ -18,6 +18,15 @@ import { SearchContext } from "../../context/SearchContext";
 import { AuthContext } from "../../context/AuthContext";
 
 const Header = ({ type }) => {
+  const headerItems = [
+    { key: "stays", label: "Stays", icon: faBed },
+    { key: "flights", label: "Flights", icon: faPlane },
+    { key: "cars", label: "Car rentals", icon: faCar },
+    { key: "attractions", label: "Attractions", icon: faBed },
+    { key: "taxis", label: "Airport taxis", icon: faTaxi },
+  ];
+
+  const [activeHeaderItem, setActiveHeaderItem] = useState("stays");
   const [destination, setDestination] = useState("");
   const [openDate, setOpenDate] = useState(false);
   const [dates, setDates] = useState([
@@ -33,7 +42,7 @@ const Header = ({ type }) => {
     children: 0,
     room: 1,
   });
- 
+  const [searchError, setSearchError] = useState("");
 
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
@@ -51,12 +60,19 @@ const Header = ({ type }) => {
   const { dispatch } = useContext(SearchContext);
 
   const handleSearch = () => {
+    if (!destination.trim()) {
+      setSearchError("Please choose a destination before searching.");
+      return;
+    }
+
+    setSearchError("");
+
     if(!user){
-      alert("Please login to your account!!!");
+      navigate("/login");
     }
     else{  
-      dispatch({ type: "NEW_SEARCH", payload: { destination, dates, options } });
-      navigate("/hotels", { state: { destination, dates, options } });
+      dispatch({ type: "NEW_SEARCH", payload: { city: destination, destination, dates, options } });
+      navigate("/hotels", { state: { destination, dates, options, category: activeHeaderItem } });
     }
     
   };
@@ -70,42 +86,17 @@ const Header = ({ type }) => {
         }
       >
         <div className="headerList">
-      <div
-        className={`headerListItem active`}
-       
-      >
-        <FontAwesomeIcon icon={faBed} />
-        <span className="icon">Stays</span>
-      </div>
-      <div
-        className={`headerListItem`}
-       
-      >
-        <FontAwesomeIcon icon={faPlane} />
-        <span className="icon">Flights</span>
-      </div>
-      <div
-        className={`headerListItem`}
-        
-      >
-        <FontAwesomeIcon icon={faCar} />
-        <span className="icon">Car rentals</span>
-      </div>
-      <div
-        className={`headerListItem`}
-        
-      >
-        <FontAwesomeIcon icon={faBed} />
-        <span className="icon">Attractions</span>
-      </div>
-      <div
-        className={`headerListItem `}
-        
-      >
-        <FontAwesomeIcon icon={faTaxi} />
-        <span className="icon">Airport taxis</span>
-      </div>
-    </div>
+          {headerItems.map((item) => (
+            <div
+              className={`headerListItem ${activeHeaderItem === item.key ? "active" : ""}`}
+              onClick={() => setActiveHeaderItem(item.key)}
+              key={item.key}
+            >
+              <FontAwesomeIcon icon={item.icon} />
+              <span className="icon">{item.label}</span>
+            </div>
+          ))}
+        </div>
         {type !== "list" && (
           <>
             <h1 className="headerTitle">
@@ -123,6 +114,7 @@ const Header = ({ type }) => {
                   type="text"
                   placeholder="Where are you going?"
                   className="headerSearchInput"
+                  value={destination}
                   onChange={(e) => setDestination(e.target.value)}
                 />
               </div>
@@ -226,6 +218,7 @@ const Header = ({ type }) => {
                 </button>
               </div>
             </div>
+            {searchError && <span className="headerSearchError">{searchError}</span>}
           </>
         )}
       </div>

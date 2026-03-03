@@ -73,7 +73,7 @@
     cursor: not-allowed;
   }
   
-  span {
+  .rError {
     color: red;
     margin-top: 10px;
     display: block;

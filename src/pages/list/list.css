@@ -81,3 +81,64 @@
 .listResult {
   flex: 3;
 }
+
+.listResultTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.listResultCount {
+  font-size: 14px;
+  color: #444;
+}
+
+.listResultControls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.listResultControlItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #444;
+}
+
+.lsSortSelect {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 13px;
+}
+
+.listResultControlCheck {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #444;
+}
+
+.listFeedbackError,
+.listFeedbackEmpty {
+  background-color: white;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 14px;
+}
+
+.listFeedbackError {
+  color: #d32f2f;
+}
+
+.listFeedbackEmpty {
+  color: #555;
+}

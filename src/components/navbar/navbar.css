@@ -16,6 +16,12 @@
   justify-content: space-between;
 }
 
+.navItems {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 
 .logo {
   font-weight: 500;
@@ -28,19 +34,37 @@
   text-decoration: underline;
 }
 .navButton {
-  margin-left: 20px;
+  margin-left: 0;
   border: none;
-  padding: 10px 20px;
+  padding: 8px 14px;
   cursor: pointer;
   color: #fff;
-  background-color: #003580;
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   text-decoration: none;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .navButton:hover {
-  background-color: #002160;
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.navUsername {
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.navLogoutButton {
+  border-color: rgba(255, 120, 120, 0.8);
+}
+
+.navLogoutButton:hover {
+  background-color: rgba(255, 80, 80, 0.2);
+  border-color: rgba(255, 120, 120, 1);
 }
