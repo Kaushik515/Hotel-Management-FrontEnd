@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useEffect, useReducer, useState } from "react";
 
 const AuthContext = createContext();
 
@@ -53,6 +53,12 @@ const AuthReducer = (state, action) => {
         loading: false,
         error: null,
       };
+    case "UPDATE_USER":
+      return {
+        user: action.payload,
+        loading: false,
+        error: null,
+      };
       
     default:
       return state;
@@ -61,6 +67,7 @@ const AuthReducer = (state, action) => {
 
 const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
+  const [isAuthInitialized, setIsAuthInitialized] = useState(false);
 
   useEffect(() => {
     try {
@@ -70,6 +77,8 @@ const AuthContextProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error parsing user from localStorage:", error);
+    } finally {
+      setIsAuthInitialized(true);
     }
   }, []);
 
@@ -87,6 +96,7 @@ const AuthContextProvider = ({ children }) => {
         user: state.user,
         loading: state.loading,
         error: state.error,
+        isAuthInitialized,
         dispatch,
       }}
     >

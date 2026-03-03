@@ -9,6 +9,7 @@ import List from "./pages/list/List"
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import MyBookings from "./pages/myBookings/MyBookings";
+import Account from "./pages/account/Account";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/hotels" element={<List/>}/>
         <Route path="/hotels/:id" element={<Hotel/>}/>
         <Route path="/my-bookings" element={<MyBookings/>}/>
+        <Route path="/account" element={<Account/>}/>
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
       </Routes>

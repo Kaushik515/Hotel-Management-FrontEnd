@@ -60,6 +60,69 @@
   line-height: 1;
 }
 
+.navDropdown {
+  position: relative;
+}
+
+.navUserButton {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navUserButton:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.navCaret {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.navDropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 170px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.navDropdownItem {
+  width: 100%;
+  display: block;
+  border: none;
+  background: #fff;
+  color: #222;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 12px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.navDropdownItem:hover {
+  background-color: #f5f7fa;
+}
+
+.navDropdownLogout {
+  color: #b30000;
+}
+
 .navLogoutButton {
   border-color: rgba(255, 120, 120, 0.8);
 }

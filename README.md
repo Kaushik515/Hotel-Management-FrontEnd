@@ -15,7 +15,8 @@
 - 🔎 Smart hotel listing filters and improved search behavior
 - 🏩 Hotel detail page with reservation modal + date-based checks
 - 🔐 Login/Register with enhanced validation
-- 📖 My Bookings page with status and cancellation support
+- 👤 My Account page with profile view/edit and password security center
+- 📖 My Bookings page with active/history sections, filters, cancellation, and reviews
 - 🖼️ Local image pipeline with fallback handling
 - 📱 Responsive layout and polished CSS across components
 
@@ -78,6 +79,7 @@ Default local URLs:
 - `/hotels` — Hotel listing / search
 - `/hotels/:id` — Hotel details + reserve flow
 - `/my-bookings` — User booking history
+- `/account` — User account center
 - `/login`
 - `/register`
 
@@ -106,6 +108,15 @@ Architecture highlights:
 - Loads current user bookings
 - Displays date range, status, room count, and total price
 - Allows cancellation of active bookings
+- Splits bookings into active/upcoming and past history
+- Supports history filters: `All`, `Completed`, `Cancelled`
+- Allows rating/review submission for completed stays
+
+### My Account
+
+- Shows saved profile details in read-only mode
+- `Edit Profile` enables update flow
+- `Security Center` supports password change with strength indicator and show/hide controls
 
 ### Registration Validation
 
@@ -118,6 +129,7 @@ Architecture highlights:
 - Upgraded spacing and typography
 - Cleaner card layouts and section hierarchy
 - Better navbar actions (bookings/logout)
+- Username dropdown with `My Account`, `My Bookings`, `Logout`
 - More robust image rendering fallback behavior
 
 ## 🧯 Troubleshooting

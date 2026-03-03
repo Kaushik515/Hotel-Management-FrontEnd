@@ -29,6 +29,40 @@
   cursor: pointer;
 }
 
+.bookingSectionTitle {
+  margin: 6px 0 2px;
+  font-size: 24px;
+  color: #111827;
+}
+
+.bookingSectionEmpty {
+  margin: 0;
+  color: #6b7280;
+}
+
+.historyFilters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.historyFilterButton {
+  border: 1px solid #cfd8e3;
+  border-radius: 999px;
+  background: #fff;
+  color: #374151;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.historyFilterButton.active {
+  border-color: #0071c2;
+  background: #0071c2;
+  color: #fff;
+}
+
 .bookingCard {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -38,6 +72,94 @@
   gap: 10px;
   background: #fff;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.bookingCardPast {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+  box-shadow: none;
+}
+
+.bookingReviewBlock {
+  margin-top: 8px;
+  border-top: 1px dashed #d6dce5;
+  padding-top: 10px;
+}
+
+.bookingReviewTitle {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #1f2937;
+}
+
+.bookingReviewStars {
+  margin: 0 0 6px;
+  color: #d08b00;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.bookingReviewText {
+  margin: 0;
+  color: #374151;
+}
+
+.bookingReviewHint {
+  margin: 0;
+  color: #6b7280;
+}
+
+.bookingReviewForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bookingReviewForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.bookingReviewForm select,
+.bookingReviewForm textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.submitReviewButton {
+  align-self: flex-start;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 14px;
+  background-color: #0071c2;
+  color: white;
+  cursor: pointer;
+}
+
+.generateReviewButton {
+  align-self: flex-start;
+  border: 1px solid #0071c2;
+  border-radius: 5px;
+  padding: 8px 14px;
+  background-color: #eaf4ff;
+  color: #0058a3;
+  cursor: pointer;
+}
+
+.generateReviewButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.submitReviewButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .bookingRow {

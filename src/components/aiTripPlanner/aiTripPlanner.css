@@ -1,0 +1,97 @@
+.aiTripPlanner {
+  width: 100%;
+  max-width: 1024px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 18px;
+  box-sizing: border-box;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.aiTripPlannerHeader h2 {
+  margin: 0;
+  font-size: 28px;
+  color: #111827;
+}
+
+.aiTripPlannerHeader p {
+  margin: 6px 0 0;
+  color: #4b5563;
+}
+
+.aiPromptRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.aiPromptButton {
+  border: 1px solid #cfd8e3;
+  border-radius: 999px;
+  background: #f8fbff;
+  color: #0f4f8a;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.aiPromptButton:hover {
+  background: #ecf5ff;
+}
+
+.aiInputRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aiInputRow textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.aiInputRow button {
+  align-self: flex-start;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 14px;
+  background: #0071c2;
+  color: #fff;
+  cursor: pointer;
+}
+
+.aiInputRow button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.aiError {
+  margin: 0;
+  color: #d32f2f;
+}
+
+.aiReplyCard {
+  border: 1px solid #dbe8f7;
+  background: #f7fbff;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.aiReplyCard h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #0f4f8a;
+}
+
+.aiReplyText {
+  margin: 0;
+  color: #1f2937;
+  line-height: 1.55;
+}

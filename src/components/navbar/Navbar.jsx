@@ -1,12 +1,28 @@
 import "./navbar.css";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+
 const Navbar = () => {
   const { user, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -15,6 +31,7 @@ const Navbar = () => {
       console.error("Logout error:", err);
     } finally {
       dispatch({ type: "LOGOUT" });
+      setIsMenuOpen(false);
       navigate("/login");
     }
   };
@@ -27,11 +44,42 @@ const Navbar = () => {
         </Link>
         {user ? (
           <div className="navItems">
-            <Link to="/my-bookings">
-              <button className="navButton">My Bookings</button>
-            </Link>
-            <button className="navButton navLogoutButton" onClick={handleLogout}>Logout</button>
-            <span className="navUsername">{user.username}</span>
+            <div className="navDropdown" ref={menuRef}>
+              <button
+                className="navUserButton"
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+                type="button"
+              >
+                {user.username}
+                <span className="navCaret">▾</span>
+              </button>
+
+              {isMenuOpen && (
+                <div className="navDropdownMenu">
+                  <Link
+                    to="/account"
+                    className="navDropdownItem"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    My Account
+                  </Link>
+                  <Link
+                    to="/my-bookings"
+                    className="navDropdownItem"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    My Bookings
+                  </Link>
+                  <button
+                    className="navDropdownItem navDropdownLogout"
+                    onClick={handleLogout}
+                    type="button"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="navItems">
