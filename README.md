@@ -1,128 +1,149 @@
-# Hotel Management Frontend
+# 🏨 Hotel Management Frontend
 
-Modern React client for hotel search, booking, authentication, and booking history.
+> Modern React client for hotel search, booking, authentication, and booking history.
 
-## Highlights
-- Home page with featured cities/properties and property-type insights
-- Hotel listing with filters and improved query behavior
-- Hotel detail page with reservation modal and date-based availability checks
-- Authentication pages (login/register) with enhanced validation
-- My Bookings page with status view and cancel action
-- Local image asset pipeline with fallback handling
-- Responsive UI and upgraded CSS across major components
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=000)
+![Router](https://img.shields.io/badge/React_Router-v6-CA4245?logo=reactrouter&logoColor=white)
+![Axios](https://img.shields.io/badge/Axios-HTTP-5A29E4?logo=axios&logoColor=white)
+![CSS](https://img.shields.io/badge/UI-Custom_CSS-1572B6?logo=css3&logoColor=white)
 
-## Tech Stack
-- React 18
-- React Router v6
-- Axios
-- react-date-range
-- react-select
+---
 
-## Project Structure
-- `src/components/` reusable UI modules
-- `src/pages/` route-level pages
-- `src/context/` auth/search state
-- `src/hooks/` shared data hooks
-- `public/images/` local media assets
+## ✨ Highlights
 
-## Environment Variables
-Create `.env` inside this folder:
+- 🏠 Home page with featured cities/properties
+- 🔎 Smart hotel listing filters and improved search behavior
+- 🏩 Hotel detail page with reservation modal + date-based checks
+- 🔐 Login/Register with enhanced validation
+- 📖 My Bookings page with status and cancellation support
+- 🖼️ Local image pipeline with fallback handling
+- 📱 Responsive layout and polished CSS across components
+
+## 🧰 Tech Stack
+
+| Layer | Tools |
+|---|---|
+| Framework | React 18 |
+| Routing | React Router v6 |
+| API Client | Axios |
+| Date UI | react-date-range |
+| Select UI | react-select |
+
+## 📁 Project Structure
+
+```text
+Hotel-Management-FrontEnd/
+├── public/
+│   └── images/             # static image assets
+└── src/
+    ├── components/         # reusable UI blocks
+    ├── pages/              # route screens
+    ├── context/            # AuthContext + SearchContext
+    ├── hooks/              # useFetch and helpers
+    └── App.js              # route composition
+```
+
+## ⚙️ Environment Variables
+
+Create `.env` in this folder:
 
 ```env
 REACT_APP_API_BASE_URL=http://localhost:5000
 PORT=3000
 ```
 
-## Install & Run
+> CRA exposes only variables prefixed with `REACT_APP_`.
+
+## 🚀 Quick Start
+
 ```bash
 npm install
 npm start
 ```
 
-## Build
-```bash
-npm run build
-```
+Default local URLs:
 
-## Available Scripts
-- `npm start` — starts React development server
-- `npm run build` — creates production build in `build/`
-- `npm test` — runs test watcher
-
-## Routing
-- `/` Home
-- `/hotels` Listing/search
-- `/hotels/:id` Hotel details + reserve flow
-- `/my-bookings` User booking history
-- `/login`
-- `/register`
-
-## Backend Integration
-This app targets backend API routes under `/api/...`.
-
-Default local setup:
 - Frontend: `http://localhost:3000`
 - Backend: `http://localhost:5000`
 
-## Application Architecture
-- `AuthContext` stores session user and auth actions
-- `SearchContext` stores destination/dates/options used by listing and hotel pages
-- `useFetch` centralizes API read operations and loading/error handling
-- Route pages compose reusable components (`Navbar`, `Header`, cards, reserve modal)
+## 📜 Scripts
 
-## Data & State Strategy
-- Axios defaults are configured globally in `src/index.js`
-- Authenticated calls rely on cookie-based backend session
-- Booking and cancellation use optimistic UI refresh patterns in relevant screens
-- Reserve flow computes date ranges and disables unavailable room numbers
+- `npm start` — run development server
+- `npm run build` — generate production bundle in `build/`
+- `npm test` — run test watcher
 
-## Key Functional Flows
+## 🧭 App Routes
+
+- `/` — Home
+- `/hotels` — Hotel listing / search
+- `/hotels/:id` — Hotel details + reserve flow
+- `/my-bookings` — User booking history
+- `/login`
+- `/register`
+
+## 🔌 Backend Integration
+
+The frontend calls backend routes under `/api/...` using `REACT_APP_API_BASE_URL`.
+
+Architecture highlights:
+
+- `AuthContext` for login state and user session data
+- `SearchContext` for destination, dates, and filter options
+- `useFetch` for shared loading/error/data fetching logic
+- Reusable component composition across all route pages
+
+## 🔄 Key User Flows
 
 ### Reservation Flow
-- User selects travel dates and room(s)
-- Unavailable room dates are blocked in UI
-- Booking request sent to backend
-- Conflict response (`409`) is handled with user-facing feedback
+
+1. User picks dates and room options
+2. Unavailable room dates are blocked in UI
+3. Booking request sent to backend
+4. Conflict (`409`) is shown with user-facing feedback
 
 ### My Bookings
-- Fetches current user bookings
-- Displays date range, status, room count, price
-- Allows cancellation for active bookings
 
-### Register Validation
-- Country/city selectable with searchable dropdowns
+- Loads current user bookings
+- Displays date range, status, room count, and total price
+- Allows cancellation of active bookings
+
+### Registration Validation
+
+- Searchable country/city selects
 - Client-side email validation before submit
-- Backend enforces final email and uniqueness checks
+- Backend handles final validation + uniqueness checks
 
-## UI/CSS Improvements Included
-- Enhanced home page sections (featured, properties, cards)
-- Better typography and card spacing
-- Improved navbar actions (including booking navigation/logout flow)
-- More robust image rendering and fallback behavior
+## 🎨 UI Improvements Included
 
-## Troubleshooting
-- **Frontend fails to start**: ensure no other app uses port `3000`
-- **API calls fail**: verify backend is running on `5000`
-- **Auth cookie issues**: check backend CORS + credentials config
-- **Images not showing**: confirm files exist in `public/images`
+- Upgraded spacing and typography
+- Cleaner card layouts and section hierarchy
+- Better navbar actions (bookings/logout)
+- More robust image rendering fallback behavior
 
-## Environment Modes
-- Local development: use `.env` with `REACT_APP_API_BASE_URL=http://localhost:5000`
-- If backend host changes, update `REACT_APP_API_BASE_URL` and restart frontend
-- CRA only exposes variables prefixed with `REACT_APP_`
+## 🧯 Troubleshooting
 
-## Deployment Notes
-- Build command: `npm run build`
-- Serve static output from `build/` using your preferred web server
-- Ensure backend `CLIENT_URL` matches deployed frontend origin
-- Validate cookie/session behavior under HTTPS before release
+- **App not starting**: ensure port `3000` is free
+- **API calls failing**: verify backend is running on `5000`
+- **Auth issues**: check backend CORS + credentials settings
+- **Missing images**: confirm files exist in `public/images`
 
-## QA Checklist
-- [ ] Register/Login/Logout flow works end-to-end
-- [ ] Featured city/property counts render non-zero values
-- [ ] Booking conflict shows clear error (`409` path)
-- [ ] My Bookings shows current user records and cancel action
-- [ ] Fallback images render when an asset URL fails
+## 🚢 Deployment Notes
 
-## Status
-Frontend is integrated with booking APIs, includes polished UI updates, and supports the complete user booking workflow.
+- Build with `npm run build`
+- Serve static output from `build/`
+- Set backend `CLIENT_URL` to deployed frontend origin
+- Validate cookie/session behavior over HTTPS
+
+## ✅ QA Checklist
+
+- [ ] Register/Login/Logout works end-to-end
+- [ ] Featured counts render correctly
+- [ ] Booking conflict path shows clear `409` message
+- [ ] My Bookings lists user data and allows cancel
+- [ ] Image fallback behavior works
+
+---
+
+### 📌 Current Status
+
+Frontend is integrated with backend booking APIs and supports the complete user booking journey.
