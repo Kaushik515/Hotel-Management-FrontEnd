@@ -56,6 +56,28 @@
     display: flex; /* Use flexbox for vertical alignment */
     align-items: center; /* Align items vertically in the center */
   }
+
+  .rPasswordWrap {
+    position: relative;
+    width: 100%;
+  }
+
+  .rPasswordWrap .rInput {
+    padding-right: 74px;
+  }
+
+  .rPasswordToggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #0058a3;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+  }
   
   
   .rButton {
@@ -78,5 +100,57 @@
     margin-top: 10px;
     display: block;
     text-align: center;
+  }
+
+  .rInfo {
+    color: #0058a3;
+    margin-top: -6px;
+    margin-bottom: 10px;
+    display: block;
+    text-align: left;
+    font-size: 12px;
+  }
+
+  .rSuccess {
+    color: #0b8f3a;
+    margin-top: -6px;
+    margin-bottom: 10px;
+    display: block;
+    text-align: left;
+    font-size: 12px;
+  }
+
+  .rPhoneHint {
+    margin: -8px 0 8px 0;
+    padding: 8px 10px;
+    background-color: #f0f5ff;
+    border: 1px solid #cfe5ff;
+    border-radius: 4px;
+    text-align: left;
+  }
+
+  .rPhoneHint small {
+    color: #0058a3;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .rPasswordCriteria {
+    margin: 0 0 12px;
+    padding-left: 18px;
+    display: grid;
+    gap: 4px;
+  }
+
+  .rPasswordCriteria li {
+    font-size: 12px;
+  }
+
+  .rPasswordCriteria li.valid {
+    color: #0b8f3a;
+  }
+
+  .rPasswordCriteria li.invalid {
+    color: #9b1200;
   }
   

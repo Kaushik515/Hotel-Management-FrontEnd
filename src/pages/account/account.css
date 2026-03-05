@@ -141,6 +141,25 @@
   gap: 6px;
 }
 
+.accountPasswordCriteria {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+
+.accountPasswordCriteria li {
+  font-size: 12px;
+}
+
+.accountPasswordCriteria li.valid {
+  color: #0b8f3a;
+}
+
+.accountPasswordCriteria li.invalid {
+  color: #9b1200;
+}
+
 .passwordStrengthBar {
   width: 100%;
   height: 8px;
@@ -187,6 +206,29 @@
 .accountSuccess {
   color: #006f3c;
   margin: 0;
+}
+
+.accountPhoneHint {
+  margin: -8px 0 8px 0;
+  padding: 8px 10px;
+  background-color: #f0f5ff;
+  border: 1px solid #cfe5ff;
+  border-radius: 6px;
+  text-align: left;
+}
+
+.accountPhoneHint small {
+  color: #0058a3;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.accountPhoneError {
+  color: #d8000c;
+  font-size: 12px;
+  display: block;
+  margin-top: -6px;
+  margin-bottom: 10px;
 }
 
 @media (max-width: 768px) {

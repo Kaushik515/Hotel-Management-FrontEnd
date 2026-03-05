@@ -6,26 +6,16 @@ import Navbar from "../../components/navbar/Navbar";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import { AuthContext } from "../../context/AuthContext";
-
-const isValidEmail = (email = "") => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim().toLowerCase());
-};
-
-const getPasswordScore = (password = "") => {
-  let score = 0;
-  if (password.length >= 8) score += 1;
-  if (/[A-Z]/.test(password)) score += 1;
-  if (/[a-z]/.test(password)) score += 1;
-  if (/[0-9]/.test(password)) score += 1;
-  if (/[^A-Za-z0-9]/.test(password)) score += 1;
-  return score;
-};
-
-const getPasswordLabel = (score) => {
-  if (score <= 2) return "Weak";
-  if (score === 3 || score === 4) return "Medium";
-  return "Strong";
-};
+import {
+  getEmailValidationError,
+  getPasswordChecks,
+  getPasswordLabel,
+  getPasswordScore,
+  getPhoneValidationError,
+  getPhoneValidationRules,
+  isValidEmail,
+  PASSWORD_POLICY_MESSAGE,
+} from "../../utils/validation";
 
 const Account = () => {
   const { user, dispatch, isAuthInitialized } = useContext(AuthContext);
@@ -101,6 +91,12 @@ const Account = () => {
   }, [user, navigate, dispatch, isAuthInitialized, currentUserId]);
 
   const handleProfileChange = (e) => {
+    if (e.target.id === "phone") {
+      const digitsOnly = (e.target.value || "").replace(/\D/g, "");
+      setProfile((prev) => ({ ...prev, phone: digitsOnly }));
+      return;
+    }
+
     setProfile((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
@@ -115,7 +111,14 @@ const Account = () => {
 
     const normalizedEmail = (profile.email || "").trim().toLowerCase();
     if (!isValidEmail(normalizedEmail)) {
-      setError("Please provide a valid email address.");
+      const emailError = getEmailValidationError(normalizedEmail);
+      setError(emailError || "Please provide a valid email address.");
+      return;
+    }
+
+    const phoneError = getPhoneValidationError(profile.phone || "", profile.country || "");
+    if (phoneError) {
+      setError(phoneError);
       return;
     }
 
@@ -157,8 +160,8 @@ const Account = () => {
       return;
     }
 
-    if (passwordForm.newPassword.length < 6) {
-      setError("New password must be at least 6 characters long.");
+    if (!meetsPasswordPolicy) {
+      setError(PASSWORD_POLICY_MESSAGE);
       return;
     }
 
@@ -188,6 +191,11 @@ const Account = () => {
 
   const passwordScore = getPasswordScore(passwordForm.newPassword);
   const passwordLabel = getPasswordLabel(passwordScore);
+  const passwordChecks = getPasswordChecks(passwordForm.newPassword);
+  const meetsPasswordPolicy = Object.values(passwordChecks).every(Boolean);
+
+  const phoneRules = getPhoneValidationRules(profile.country);
+  const phoneValidationError = getPhoneValidationError(profile.phone, profile.country);
 
   return (
     <div>
@@ -295,9 +303,18 @@ const Account = () => {
                     id="phone"
                     value={profile.phone}
                     onChange={handleProfileChange}
-                    placeholder="Phone"
+                    placeholder="Phone (digits only)"
+                    inputMode="numeric"
                     required
                   />
+                  {isEditingProfile && profile.country && phoneRules && (
+                    <div className="accountPhoneHint">
+                      <small>Format: {phoneRules.format} (country code {phoneRules.code} is auto-handled)</small>
+                    </div>
+                  )}
+                  {isEditingProfile && profile.phone && phoneValidationError && (
+                    <small className="accountPhoneError">{phoneValidationError}</small>
+                  )}
                   <input
                     id="img"
                     value={profile.img}
@@ -386,6 +403,23 @@ const Account = () => {
                       ></span>
                     </div>
                     <small>Password strength: {passwordLabel}</small>
+                    <ul className="accountPasswordCriteria">
+                      <li className={passwordChecks.minLength ? "valid" : "invalid"}>
+                        At least 8 characters
+                      </li>
+                      <li className={passwordChecks.uppercase ? "valid" : "invalid"}>
+                        One uppercase letter (A-Z)
+                      </li>
+                      <li className={passwordChecks.lowercase ? "valid" : "invalid"}>
+                        One lowercase letter (a-z)
+                      </li>
+                      <li className={passwordChecks.number ? "valid" : "invalid"}>
+                        One number (0-9)
+                      </li>
+                      <li className={passwordChecks.special ? "valid" : "invalid"}>
+                        One special character (e.g. !@#$)
+                      </li>
+                    </ul>
                   </div>
 
                   <div className="accountPasswordWrap">
@@ -410,7 +444,10 @@ const Account = () => {
                       {showPassword.confirm ? "Hide" : "Show"}
                     </button>
                   </div>
-                  <button type="submit" disabled={changingPassword}>
+                  <button
+                    type="submit"
+                    disabled={changingPassword || !meetsPasswordPolicy}
+                  >
                     {changingPassword ? "Updating..." : "Update Password"}
                   </button>
                 </form>

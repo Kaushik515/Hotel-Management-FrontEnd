@@ -14,8 +14,8 @@
 - 🏠 Home page with featured cities/properties
 - 🔎 Smart hotel listing filters and improved search behavior
 - 🏩 Hotel detail page with reservation modal + date-based checks
-- 🔐 Login/Register with enhanced validation
-- 🛡️ Deployment-safe auth session handling (token persistence + expiry guards)
+- 🔐 Login/Register with enhanced validation, live username availability, and password visibility toggle
+- 🛡️ Session-safe auth handling (`sessionStorage`, browser-close logout, 1-hour auto-expiry)
 - 👤 My Account page with profile view/edit and password security center
 - 📖 My Bookings page with active/history sections, filters, cancellation, and reviews
 - 🖼️ Local image pipeline with fallback handling
@@ -42,6 +42,7 @@ Hotel-Management-FrontEnd/
     ├── pages/              # route screens
     ├── context/            # AuthContext + SearchContext
     ├── hooks/              # useFetch and helpers
+    ├── utils/              # shared validation utilities
     └── App.js              # route composition
 ```
 
@@ -72,7 +73,6 @@ Default local URLs:
 
 - `npm start` — run development server
 - `npm run build` — generate production bundle in `build/`
-- `npm test` — run test watcher
 
 ## 🧭 App Routes
 
@@ -93,12 +93,15 @@ Architecture highlights:
 - `AuthContext` for login state and user session data
 - `SearchContext` for destination, dates, and filter options
 - `useFetch` for shared loading/error/data fetching logic
+- `src/utils/validation.js` for shared email/phone/password validation across pages
 - Reusable component composition across all route pages
 
 Session/auth hardening:
 
-- Axios request interceptor auto-attaches `Authorization: Bearer <token>` from persisted user session.
+- Axios request interceptor auto-attaches `Authorization: Bearer <token>` from active session state.
+- Auth session is stored in `sessionStorage` (closing browser/tab clears session and forces re-login).
 - Token is validated at app bootstrap; expired/malformed sessions are cleared before protected pages load.
+- Client-side timer auto-logs out users when token expires (default: 1 hour).
 - Global axios response interceptor handles `401/403` (non-auth endpoints):
     - clears stale session
     - redirects to `/login?reason=session-expired`.
@@ -125,12 +128,17 @@ Session/auth hardening:
 
 - Shows saved profile details in read-only mode
 - `Edit Profile` enables update flow
-- `Security Center` supports password change with strength indicator and show/hide controls
+- `Security Center` supports password change with strength indicator, rule checklist, and show/hide controls
+- Profile phone updates are validated by country with format hints and inline error messaging
 
 ### Registration Validation
 
 - Searchable country/city selects
+- Live username availability check with immediate feedback
 - Client-side email validation before submit
+- Phone input is digits-only local number (no extension) with country-based length validation
+- Password policy checklist (min length, upper/lowercase, number, special character)
+- Show/Hide password toggle on register form
 - Backend handles final validation + uniqueness checks
 
 ## 🎨 UI Improvements Included
@@ -159,6 +167,9 @@ Session/auth hardening:
 ## ✅ QA Checklist
 
 - [ ] Register/Login/Logout works end-to-end
+- [ ] Closing browser/tab clears session and requires login again
+- [ ] Username availability feedback works while typing
+- [ ] Register blocks invalid email/phone/password before submit
 - [ ] Refresh protected routes (`/account`, `/my-bookings`) keeps session active
 - [ ] Expired token redirects to `/login?reason=session-expired`
 - [ ] Featured counts render correctly

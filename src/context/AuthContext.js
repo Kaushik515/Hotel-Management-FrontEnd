@@ -28,6 +28,15 @@ const isTokenActive = (token = "") => {
   return exp * 1000 > Date.now();
 };
 
+const getTokenExpiryMs = (token = "") => {
+  const payload = parseJwtPayload(token);
+  const exp = Number(payload?.exp);
+
+  if (!exp) return null;
+
+  return exp * 1000;
+};
+
 const INITIAL_STATE = {
   user: null,
   loading: false,
@@ -101,27 +110,62 @@ const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+      const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
 
       if (storedUser?.token && isTokenActive(storedUser.token)) {
         dispatch({ type: "LOGIN_SUCCESS", payload: storedUser });
       } else {
-        localStorage.removeItem("user");
+        sessionStorage.removeItem("user");
       }
     } catch (error) {
-      console.error("Error parsing user from localStorage:", error);
-      localStorage.removeItem("user");
+      console.error("Error parsing user from sessionStorage:", error);
+      sessionStorage.removeItem("user");
     } finally {
+      localStorage.removeItem("user");
       setIsAuthInitialized(true);
     }
   }, []);
 
   useEffect(() => {
     if (state.user?.token && isTokenActive(state.user.token)) {
-      localStorage.setItem("user", JSON.stringify(state.user));
+      sessionStorage.setItem("user", JSON.stringify(state.user));
+      localStorage.removeItem("user");
     } else {
+      sessionStorage.removeItem("user");
       localStorage.removeItem("user");
     }
+  }, [state.user]);
+
+  useEffect(() => {
+    if (!state.user?.token) return;
+
+    const expiryMs = getTokenExpiryMs(state.user.token);
+    if (!expiryMs) return;
+
+    const remainingMs = expiryMs - Date.now();
+
+    if (remainingMs <= 0) {
+      dispatch({ type: "LOGOUT" });
+      sessionStorage.removeItem("user");
+      localStorage.removeItem("user");
+
+      if (window.location.pathname !== "/login") {
+        window.location.assign("/login?reason=session-expired");
+      }
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      dispatch({ type: "LOGOUT" });
+      sessionStorage.removeItem("user");
+      localStorage.removeItem("user");
+
+      if (window.location.pathname !== "/login") {
+        window.location.assign("/login?reason=session-expired");
+      }
+    }, remainingMs);
+
+    return () => window.clearTimeout(timeoutId);
   }, [state.user]);
 
   return (

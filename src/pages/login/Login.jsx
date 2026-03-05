@@ -10,6 +10,7 @@ const Login = () => {
     password: undefined,
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [formError, setFormError] = useState("");
 
   const { loading, error, dispatch } = useContext(AuthContext);
 
@@ -21,6 +22,18 @@ const Login = () => {
 
   const handleClick = async (e) => {
     e.preventDefault();
+
+    if (!credentials.username?.trim()) {
+      setFormError("Please enter your username.");
+      return;
+    }
+
+    if (!credentials.password) {
+      setFormError("Please enter your password.");
+      return;
+    }
+
+    setFormError("");
     dispatch({ type: "LOGIN_START" });
     try {
       const res = await axios.post("/api/auth/login", credentials);
@@ -30,7 +43,10 @@ const Login = () => {
       });
       navigate("/")
     } catch (err) {
-      dispatch({ type: "LOGIN_FAILURE", payload: err.response.data });
+      const backendError = err?.response?.data || {
+        message: "Unable to login right now. Please try again.",
+      };
+      dispatch({ type: "LOGIN_FAILURE", payload: backendError });
     }
   };
 
@@ -66,7 +82,8 @@ const Login = () => {
         <button disabled={loading} onClick={handleClick} className="lButton">
           Login
         </button>
-        {error && <span className="lError">{error.message}</span>}
+        {formError && <span className="lError">{formError}</span>}
+        {error && <span className="lError">{error.message || "Login failed."}</span>}
       </div>
     </div>
   );

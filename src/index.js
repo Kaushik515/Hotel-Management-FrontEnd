@@ -34,6 +34,7 @@ const isTokenActive = (token = "") => {
 
 const clearStoredSession = () => {
   try {
+    sessionStorage.removeItem("user");
     localStorage.removeItem("user");
   } catch (error) {
     // noop
@@ -45,7 +46,7 @@ axios.interceptors.request.use(
     let token;
 
     try {
-      const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+      const storedUser = JSON.parse(sessionStorage.getItem("user") || "null");
       token = storedUser?.token;
 
       if (token && !isTokenActive(token)) {
